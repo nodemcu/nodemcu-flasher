@@ -15,7 +15,7 @@ It will be cross platform and open source.
 
 Usage
 ---------------
-Just click flash and you can burn firmware to ESP8266.
+Just click flash and you can burn firmware to ESP8266. Before you doing it, GPIO0 MUST LOW.
 
 ![Begin program](http://i659.photobucket.com/albums/uu316/vowstar/NodeMCU-Flasher-Begin.png)
 
