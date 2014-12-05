@@ -1,11 +1,13 @@
 NodeMCU Flasher
 ===============
 
-NodeMCU flasher is a firmware programmer software for nodemcu.
+NodeMCU flasher is a firmware programmer for NodeMCU DEVKIT V0.9.
 
 This is demo version.
 
-We are working on next version and will use QT framework. It will crossplatform and opensource.
+We are working on next version and will use QT framework. 
+
+It will be cross platform and open source.
 
 Usage
 ---------------
