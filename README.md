@@ -30,3 +30,13 @@ Program success.
 Setting your own firmware.
 
 ![Setting](http://i659.photobucket.com/albums/uu316/vowstar/NodeMCU-Flasher-Setting.png)
+
+Tips: You clould use some special path to do something interesting.
+
+The blank.bin file:
+
+INTERNAL://BLANK
+
+The esp_init_data_default.bin file(for 26MHz crystal):
+
+INTERNAL://DEFAULT
