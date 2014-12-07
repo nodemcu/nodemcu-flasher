@@ -33,7 +33,7 @@ Setting your own firmware.
 
 When the path have some error(e.g. file not exist), the line will become red.
 
-Tips: You clould use some special path to do something interesting.
+Tips: You could use some special path to do something interesting.
 
 The blank.bin file:
 
