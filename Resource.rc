@@ -1,0 +1,8 @@
+BLANK       BIN        Resources\Binaries\blank.bin
+FLASH       BIN        Resources\Binaries\eagle.app.v6.flash.bin
+IROM        BIN        Resources\Binaries\eagle.app.v6.irom0text.bin
+DEFAULT     BIN        Resources\Binaries\esp_init_data_default.bin
+NODEMCU     BIN        Resources\Binaries\nodemcu.bin
+YES         RCDATA     Resources\Images\Yes.png
+NO          RCDATA     Resources\Images\No.png
+WAIT        BIN        Resources\Images\Wait.gif
