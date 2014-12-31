@@ -17,7 +17,7 @@ uses
   {System.AnsiStrings,}
   Vcl.Imaging.PNGImage, Vcl.Imaging.GIFImg, Vcl.Buttons,
   SerialPortsCtrl, SPComm, DelphiZxingQRCode, UnitFrameConfigLine,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, DataChest;
 
 type
   TRunState = (StateHandshake, StateBurn, StateRun, StateFinished);
@@ -75,6 +75,7 @@ type
     procedure TimerStateMachineTimer(Sender: TObject);
     procedure LabelIntroductionClick(Sender: TObject);
     procedure TimerCodeTimer(Sender: TObject);
+    procedure FrameConfigLineChange(Sender: TObject);
   private
     SerailBufferA: AnsiString;
     BurnOK: Boolean;
@@ -84,6 +85,8 @@ type
     CurrentAddress: UInt32;
     APMACStr: string;
     STAMACStr: string;
+    FConfigDir: string;
+    FConfigFileName: string;
     procedure ReceiveData(Sender: TObject; Buffer: PAnsiChar;
       BufferLength: Word);
     function SendByte(const Data: Byte): Boolean;
@@ -102,10 +105,19 @@ type
     procedure GetRegValue(Frame: AnsiString);
     procedure UpdateQRCode(QRText: String);
     procedure LoadSettings;
+    procedure LoadDataChest;
+    procedure SaveDataChest;
+    procedure InitDataChest;
+    procedure SyncDataChest;
     procedure WriteMACFile(const MACStr: string; const FileName: string);
+    function GetConfigDir: string;
+    function GetConfigFileName: string;
+
     { Private declarations }
   public
     { Public declarations }
+    property ConfigDir: string read GetConfigDir write FConfigDir;
+    property ConfigFileName: string read GetConfigFileName;
   end;
 
 var
@@ -402,9 +414,9 @@ begin
         Self.LabeledEditSTAMAC.Text := STAMACStr;
         WriteMACFile(FormatdateTime('yyyymmddhhnnss', Now) + #13#10 + ' AP MAC:'
           + APMACStr + #13#10 + 'STA MAC:' + STAMACStr + #13#10,
-          'ESP8266MAC.txt');
-        ImageQRCode.Picture.SaveToFile
-          (FormatdateTime('yyyymmddhhnnss".png"', Now));
+          ConfigDir + 'ESP8266MAC.txt');
+        ImageQRCode.Picture.SaveToFile(ConfigDir +
+          FormatdateTime('yyyymmddhhnnss".png"', Now));
       end;
     end);
   for J := 1 to 7 do
@@ -484,6 +496,11 @@ begin
   BurnOK := True;
   CommMain.StopComm;
   CommMain.Free;
+end;
+
+procedure TFormMain.FrameConfigLineChange(Sender: TObject);
+begin
+   SaveDataChest;
 end;
 
 function TFormMain.SendByte(const Data: Byte): Boolean;
@@ -576,6 +593,20 @@ begin
     // end;
   end;
   Result := Temp;
+end;
+
+function TFormMain.GetConfigDir: string;
+begin
+  if (not DirectoryExists(FConfigDir)) then
+  begin
+    ForceDirectories(FConfigDir);
+  end;
+  Result := FConfigDir;
+end;
+
+function TFormMain.GetConfigFileName: string;
+begin
+  Result := ConfigDir + 'Config.xml';
 end;
 
 function TFormMain.GetExchangedString(const Str: AnsiString): AnsiString;
@@ -686,7 +717,136 @@ begin
   TabSheetIntroduction.Show;
 end;
 
+procedure TFormMain.InitDataChest;
+begin
+  TStringChest[FrameConfigLine1.Name + '.FilePath'] := 'INTERNAL://FLASH';
+  TStringChest[FrameConfigLine2.Name + '.FilePath'] := 'INTERNAL://IROM';
+  TStringChest[FrameConfigLine3.Name + '.FilePath'] := 'INTERNAL://DEFAULT';
+  TStringChest[FrameConfigLine4.Name + '.FilePath'] := 'INTERNAL://BLANK';
+  TStringChest[FrameConfigLine5.Name + '.FilePath'];
+  TStringChest[FrameConfigLine6.Name + '.FilePath'];
+  TStringChest[FrameConfigLine7.Name + '.FilePath'];
+  TStringChest[FrameConfigLine1.Name + '.Offset'] := '0x00000';
+  TStringChest[FrameConfigLine2.Name + '.Offset'] := '0x10000';
+  TStringChest[FrameConfigLine3.Name + '.Offset'] := '0xfc000';
+  TStringChest[FrameConfigLine4.Name + '.Offset'] := '0xfe000';
+  TStringChest[FrameConfigLine5.Name + '.Offset'];
+  TStringChest[FrameConfigLine6.Name + '.Offset'];
+  TStringChest[FrameConfigLine7.Name + '.Offset'];
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '115200';
+  TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 1;
+  TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] := 0;
+  TStringChest.Publisher := 'NodeMCU Team. http://www.nodemcu.com';
+  TStringChest.SaveToXMLFile(ConfigFileName);
+end;
+
+procedure TFormMain.SyncDataChest;
+begin
+  TStringChest[FrameConfigLine1.Name + '.FilePath'] :=
+    FrameConfigLine1.FilePath;
+  TStringChest[FrameConfigLine2.Name + '.FilePath'] :=
+    FrameConfigLine2.FilePath;
+  TStringChest[FrameConfigLine3.Name + '.FilePath'] :=
+    FrameConfigLine3.FilePath;
+  TStringChest[FrameConfigLine4.Name + '.FilePath'] :=
+    FrameConfigLine4.FilePath;
+  TStringChest[FrameConfigLine5.Name + '.FilePath'] :=
+    FrameConfigLine5.FilePath;
+  TStringChest[FrameConfigLine6.Name + '.FilePath'] :=
+    FrameConfigLine6.FilePath;
+  TStringChest[FrameConfigLine7.Name + '.FilePath'] :=
+    FrameConfigLine7.FilePath;
+  TStringChest[FrameConfigLine1.Name + '.Offset'] := FrameConfigLine1.Offset;
+  TStringChest[FrameConfigLine2.Name + '.Offset'] := FrameConfigLine2.Offset;
+  TStringChest[FrameConfigLine3.Name + '.Offset'] := FrameConfigLine3.Offset;
+  TStringChest[FrameConfigLine4.Name + '.Offset'] := FrameConfigLine4.Offset;
+  TStringChest[FrameConfigLine5.Name + '.Offset'] := FrameConfigLine5.Offset;
+  TStringChest[FrameConfigLine6.Name + '.Offset'] := FrameConfigLine6.Offset;
+  TStringChest[FrameConfigLine7.Name + '.Offset'] := FrameConfigLine7.Offset;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine1.CheckBoxEnable.Checked;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine2.CheckBoxEnable.Checked;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine3.CheckBoxEnable.Checked;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine4.CheckBoxEnable.Checked;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine5.CheckBoxEnable.Checked;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine6.CheckBoxEnable.Checked;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+    FrameConfigLine7.CheckBoxEnable.Checked;
+  TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] :=
+    ComboBoxFlashBaudrate.Text;
+  TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] :=
+    ComboBoxFlashSize.ItemIndex;
+  TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] :=
+    ComboBoxFlashSpeed.ItemIndex;
+end;
+
+procedure TFormMain.LoadDataChest;
+begin
+  TStringChest.LoadFromXMLFile(ConfigFileName);
+  FrameConfigLine1.FilePath := TStringChest
+    [FrameConfigLine1.Name + '.FilePath'];
+  FrameConfigLine2.FilePath := TStringChest
+    [FrameConfigLine2.Name + '.FilePath'];
+  FrameConfigLine3.FilePath := TStringChest
+    [FrameConfigLine3.Name + '.FilePath'];
+  FrameConfigLine4.FilePath := TStringChest
+    [FrameConfigLine4.Name + '.FilePath'];
+  FrameConfigLine5.FilePath := TStringChest
+    [FrameConfigLine5.Name + '.FilePath'];
+  FrameConfigLine6.FilePath := TStringChest
+    [FrameConfigLine6.Name + '.FilePath'];
+  FrameConfigLine7.FilePath := TStringChest
+    [FrameConfigLine7.Name + '.FilePath'];
+  FrameConfigLine1.Offset := TStringChest[FrameConfigLine1.Name + '.Offset'];
+  FrameConfigLine2.Offset := TStringChest[FrameConfigLine2.Name + '.Offset'];
+  FrameConfigLine3.Offset := TStringChest[FrameConfigLine3.Name + '.Offset'];
+  FrameConfigLine4.Offset := TStringChest[FrameConfigLine4.Name + '.Offset'];
+  FrameConfigLine5.Offset := TStringChest[FrameConfigLine5.Name + '.Offset'];
+  FrameConfigLine6.Offset := TStringChest[FrameConfigLine6.Name + '.Offset'];
+  FrameConfigLine7.Offset := TStringChest[FrameConfigLine7.Name + '.Offset'];
+  FrameConfigLine1.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine2.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine3.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine4.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine5.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine6.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine7.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  ComboBoxFlashBaudrate.Text := TStringChest
+    [ComboBoxFlashBaudrate.Name + '.Text'];
+  ComboBoxFlashSize.ItemIndex :=
+    TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'];
+  ComboBoxFlashSpeed.ItemIndex :=
+    TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'];
+end;
+
+procedure TFormMain.SaveDataChest;
+begin
+  SyncDataChest;
+  TStringChest.SaveToXMLFile(ConfigFileName);
+end;
+
 procedure TFormMain.LoadSettings;
+var
+  FileName: string;
   procedure InitNote;
 {$J+}
   const
@@ -748,19 +908,31 @@ procedure TFormMain.LoadSettings;
   end;
 
 begin
-  FrameConfigLine1.FilePath := 'INTERNAL://NODEMCU';
-  FrameConfigLine1.Offset := '0x00000';
-  FrameConfigLine1.CheckBoxEnable.Checked := True;
+  ConfigDir := ExtractFilePath(Application.ExeName) + 'Config\';
+  // ShowMessage(ConfigDir);
+  // ShowMessage(FrameConfigLine2.Name);
+  if (FileExists(ConfigFileName)) then
+  begin
+    LoadDataChest;
+  end
+  else
+  begin
+    // FrameConfigLine1.FilePath := 'INTERNAL://NODEMCU';
+    // FrameConfigLine1.Offset := '0x00000';
+    // FrameConfigLine1.CheckBoxEnable.Checked := True;
+    // FrameConfigLine2.FilePath := 'INTERNAL://FLASH';
+    // FrameConfigLine2.Offset := '0x00000';
+    // FrameConfigLine2.CheckBoxEnable.Checked := True;
+    // FrameConfigLine3.FilePath := 'INTERNAL://IROM';
+    // FrameConfigLine3.Offset := '0x40000';
+    // FrameConfigLine3.CheckBoxEnable.Checked := True;
+    // FrameConfigLine4.FilePath := 'INTERNAL://DEFAULT';
+    // FrameConfigLine4.Offset := '0x7C000';
+    // FrameConfigLine4.CheckBoxEnable.Checked := True;
 
-  // FrameConfigLine2.FilePath := 'INTERNAL://FLASH';
-  // FrameConfigLine2.Offset := '0x00000';
-  // FrameConfigLine2.CheckBoxEnable.Checked := True;
-  // FrameConfigLine3.FilePath := 'INTERNAL://IROM';
-  // FrameConfigLine3.Offset := '0x40000';
-  // FrameConfigLine3.CheckBoxEnable.Checked := True;
-  // FrameConfigLine4.FilePath := 'INTERNAL://DEFAULT';
-  // FrameConfigLine4.Offset := '0x7C000';
-  // FrameConfigLine4.CheckBoxEnable.Checked := True;
+    InitDataChest;
+    LoadDataChest;
+  end;
 
   InitRichEdit;
   InitNote;
@@ -777,7 +949,15 @@ begin
     else
     begin
       CommMain.CommName := ComboBoxSerialPortA.Text;
-      CommMain.BaudRate := StrToInt(ComboBoxFlashBaudrate.Text);
+      if (ComboBoxFlashBaudrate.Text = '') then
+      begin
+        CommMain.BaudRate := StrToInt(ComboBoxFlashBaudrate.Text);
+      end
+      else
+      begin
+        CommMain.BaudRate := 115200;
+      end;
+      // CommMain.BaudRate := StrToInt(ComboBoxFlashBaudrate.Text);
       // CommMain.BaudRate := 115200; // 42s To Flash
       // CommMain.BaudRate := 576000; // 29s To Flash
       // CommMain.BaudRate := 960000; // 27s To Flash

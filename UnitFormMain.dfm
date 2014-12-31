@@ -350,12 +350,17 @@ object FormMain: TFormMain
                 Row = 0
               end>
             ExplicitWidth = 546
+            inherited CheckBoxEnable: TCheckBox
+              OnClick = FrameConfigLineChange
+            end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -404,12 +409,17 @@ object FormMain: TFormMain
                 Row = 0
               end>
             ExplicitWidth = 546
+            inherited CheckBoxEnable: TCheckBox
+              OnClick = FrameConfigLineChange
+            end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -463,14 +473,17 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
+              OnClick = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -526,14 +539,17 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
+              OnClick = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -589,14 +605,17 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
+              OnClick = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -652,14 +671,17 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
+              OnClick = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -715,14 +737,17 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
+              OnClick = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
+              OnChange = FrameConfigLineChange
               ExplicitWidth = 394
             end
             inherited ComboBoxOffset: TComboBox
               Left = 445
+              OnChange = FrameConfigLineChange
               ExplicitLeft = 445
             end
             inherited ImageOpenFile: TImage
@@ -788,6 +813,7 @@ object FormMain: TFormMain
         Font.Name = #24494#36719#38597#40657
         Font.Style = []
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+        ItemIndex = 5
         ParentColor = True
         ParentFont = False
         ParentShowHint = False
@@ -796,6 +822,7 @@ object FormMain: TFormMain
         TabStop = False
         Text = '115200'
         TextHint = 'Baudrate'
+        OnChange = FrameConfigLineChange
         Items.Strings = (
           '9600'
           '19200'
@@ -829,6 +856,7 @@ object FormMain: TFormMain
         TabStop = False
         Text = '512kByte'
         TextHint = 'Select size'
+        OnChange = FrameConfigLineChange
         Items.Strings = (
           '256kByte'
           '512kByte'
@@ -858,6 +886,7 @@ object FormMain: TFormMain
         TabStop = False
         Text = '40MHz'
         TextHint = 'Select speed'
+        OnChange = FrameConfigLineChange
         Items.Strings = (
           '40MHz'
           '26.7MHz'

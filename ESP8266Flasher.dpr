@@ -16,7 +16,8 @@ uses
   UnitESP8266Protocol in 'UnitESP8266Protocol.pas',
   Vcl.Themes,
   Vcl.Styles,
-  UnitFrameConfigLine in 'UnitFrameConfigLine.pas' {FrameConfigLine: TFrame};
+  UnitFrameConfigLine in 'UnitFrameConfigLine.pas' {FrameConfigLine: TFrame},
+  DataChest in 'DataChest.pas';
 
 {$R *.res}
 
