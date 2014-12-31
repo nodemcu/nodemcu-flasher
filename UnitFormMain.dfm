@@ -735,6 +735,136 @@ object FormMain: TFormMain
         end
       end
     end
+    object TabSheetAdvanced: TTabSheet
+      Caption = 'Advanced'
+      ImageIndex = 4
+      object LabelFlashBaudrate: TLabel
+        Left = 16
+        Top = 27
+        Width = 91
+        Height = 28
+        Caption = 'Baudrate'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ParentFont = False
+      end
+      object LabelFlashSize: TLabel
+        Left = 16
+        Top = 83
+        Width = 96
+        Height = 28
+        Caption = 'Flash size'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ParentFont = False
+      end
+      object LabelFlashSpeed: TLabel
+        Left = 16
+        Top = 136
+        Width = 118
+        Height = 28
+        Caption = 'Flash speed'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ParentFont = False
+      end
+      object ComboBoxFlashBaudrate: TComboBox
+        Left = 140
+        Top = 24
+        Width = 162
+        Height = 36
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+        ParentColor = True
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        TabStop = False
+        Text = '115200'
+        TextHint = 'Baudrate'
+        Items.Strings = (
+          '9600'
+          '19200'
+          '38400'
+          '57600'
+          '74880'
+          '115200'
+          '230400'
+          '460800'
+          '512000'
+          '921600')
+      end
+      object ComboBoxFlashSize: TComboBox
+        Left = 140
+        Top = 80
+        Width = 162
+        Height = 36
+        Style = csDropDownList
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+        ItemIndex = 1
+        ParentColor = True
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        TabStop = False
+        Text = '512kByte'
+        TextHint = 'Select size'
+        Items.Strings = (
+          '256kByte'
+          '512kByte'
+          '1MByte'
+          '2MByte'
+          '4MByte'
+          '')
+      end
+      object ComboBoxFlashSpeed: TComboBox
+        Left = 140
+        Top = 133
+        Width = 162
+        Height = 36
+        Style = csDropDownList
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+        ItemIndex = 0
+        ParentColor = True
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        TabStop = False
+        Text = '40MHz'
+        TextHint = 'Select speed'
+        Items.Strings = (
+          '40MHz'
+          '26.7MHz'
+          '20MHz'
+          '80MHz')
+      end
+    end
     object TabSheetIntroduction: TTabSheet
       Caption = 'About'
       ImageIndex = 2

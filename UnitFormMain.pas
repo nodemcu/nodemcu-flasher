@@ -1,11 +1,11 @@
-{*******************************************************}
-{                     主窗体单元                        }
-{*******************************************************}
-{*******************************************************}
-{ 本软件使用MIT协议.                                    }
-{ 发布本软件的目的是希望它能够在一定程度上帮到您.       }
-{ 编写者: Vowstar <vowstar@gmail.com>, NODEMCU开发组.   }
-{*******************************************************}
+{ ******************************************************* }
+{ 主窗体单元 }
+{ ******************************************************* }
+{ ******************************************************* }
+{ 本软件使用MIT协议. }
+{ 发布本软件的目的是希望它能够在一定程度上帮到您. }
+{ 编写者: Vowstar <vowstar@gmail.com>, NODEMCU开发组. }
+{ ******************************************************* }
 unit UnitFormMain;
 
 interface
@@ -58,6 +58,13 @@ type
     IdHTTPNote: TIdHTTP;
     RichEditNote: TRichEdit;
     TimerCode: TTimer;
+    TabSheetAdvanced: TTabSheet;
+    ComboBoxFlashBaudrate: TComboBox;
+    LabelFlashBaudrate: TLabel;
+    LabelFlashSize: TLabel;
+    ComboBoxFlashSize: TComboBox;
+    ComboBoxFlashSpeed: TComboBox;
+    LabelFlashSpeed: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ActionBurnExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -200,6 +207,49 @@ var
     end;
   end;
   procedure FlashStream(MemoryStream: TMemoryStream; BaseAddress: UInt32);
+    function GetFlashSpeedSizeByte: Byte;
+    begin
+      Result := $00;
+      if (ComboBoxFlashSize.Text = '512kByte') then
+      begin
+        Result := Result or $00;
+      end
+      else if (ComboBoxFlashSize.Text = '256kByte') then
+      begin
+        Result := Result or $10;
+      end
+      else if (ComboBoxFlashSize.Text = '1MByte') then
+      begin
+        Result := Result or $20;
+      end
+      else if (ComboBoxFlashSize.Text = '2MByte') then
+      begin
+        Result := Result or $30;
+      end
+      else if (ComboBoxFlashSize.Text = '4MByte') then
+      begin
+        Result := Result or $40;
+      end;
+      if (ComboBoxFlashSpeed.Text = '40MHz') then
+      begin
+        Result := Result or $0;
+      end
+      else if (ComboBoxFlashSpeed.Text = '26.7MHz') then
+      begin
+        Result := Result or $1;
+      end
+      else if (ComboBoxFlashSpeed.Text = '20MHz') then
+      begin
+        Result := Result or $2;
+      end
+      else if (ComboBoxFlashSpeed.Text = '80MHz') then
+      begin
+        Result := Result or $F;
+      end;
+    end;
+
+  var
+    FlashSpeedSizeByte: Byte;
   begin
     MemoryStream.Position := 0;
     if (not BurnOK) then
@@ -247,6 +297,12 @@ var
               ChangeIconFail;
             end);
         end;
+      end;
+      if (BaseAddress = 0) then
+      begin
+        MemoryStream.Position := 3;
+        FlashSpeedSizeByte := GetFlashSpeedSizeByte;
+        MemoryStream.Write(FlashSpeedSizeByte, 1);
       end;
       Buffer := '';
       SetLength(Buffer, 1024);
@@ -721,7 +777,8 @@ begin
     else
     begin
       CommMain.CommName := ComboBoxSerialPortA.Text;
-      CommMain.BaudRate := 115200; // 42s To Flash
+      CommMain.BaudRate := StrToInt(ComboBoxFlashBaudrate.Text);
+      // CommMain.BaudRate := 115200; // 42s To Flash
       // CommMain.BaudRate := 576000; // 29s To Flash
       // CommMain.BaudRate := 960000; // 27s To Flash
       CommMain.Parity := None;
