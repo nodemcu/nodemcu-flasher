@@ -351,7 +351,7 @@ object FormMain: TFormMain
               end>
             ExplicitWidth = 546
             inherited CheckBoxEnable: TCheckBox
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
@@ -410,7 +410,7 @@ object FormMain: TFormMain
               end>
             ExplicitWidth = 546
             inherited CheckBoxEnable: TCheckBox
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
             end
             inherited ComboBoxPath: TComboBox
               Width = 394
@@ -473,7 +473,7 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
@@ -539,7 +539,7 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
@@ -605,7 +605,7 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
@@ -671,7 +671,7 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
@@ -737,7 +737,7 @@ object FormMain: TFormMain
             ExplicitHeight = 30
             inherited CheckBoxEnable: TCheckBox
               Height = 28
-              OnClick = FrameConfigLineChange
+              OnMouseLeave = FrameConfigLineChange
               ExplicitHeight = 28
             end
             inherited ComboBoxPath: TComboBox
@@ -778,7 +778,7 @@ object FormMain: TFormMain
       end
       object LabelFlashSize: TLabel
         Left = 16
-        Top = 83
+        Top = 69
         Width = 96
         Height = 28
         Caption = 'Flash size'
@@ -791,7 +791,7 @@ object FormMain: TFormMain
       end
       object LabelFlashSpeed: TLabel
         Left = 16
-        Top = 136
+        Top = 111
         Width = 118
         Height = 28
         Caption = 'Flash speed'
@@ -837,7 +837,7 @@ object FormMain: TFormMain
       end
       object ComboBoxFlashSize: TComboBox
         Left = 140
-        Top = 80
+        Top = 66
         Width = 162
         Height = 36
         Style = csDropDownList
@@ -867,7 +867,7 @@ object FormMain: TFormMain
       end
       object ComboBoxFlashSpeed: TComboBox
         Left = 140
-        Top = 133
+        Top = 108
         Width = 162
         Height = 36
         Style = csDropDownList
@@ -892,6 +892,15 @@ object FormMain: TFormMain
           '26.7MHz'
           '20MHz'
           '80MHz')
+      end
+      object ButtonRestoreDefault: TButton
+        Left = 16
+        Top = 150
+        Width = 286
+        Height = 68
+        Caption = 'Restore default'
+        TabOrder = 3
+        OnClick = ButtonRestoreDefaultClick
       end
     end
     object TabSheetIntroduction: TTabSheet

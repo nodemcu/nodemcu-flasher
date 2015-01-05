@@ -65,6 +65,7 @@ type
     ComboBoxFlashSize: TComboBox;
     ComboBoxFlashSpeed: TComboBox;
     LabelFlashSpeed: TLabel;
+    ButtonRestoreDefault: TButton;
     procedure FormCreate(Sender: TObject);
     procedure ActionBurnExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -76,6 +77,7 @@ type
     procedure LabelIntroductionClick(Sender: TObject);
     procedure TimerCodeTimer(Sender: TObject);
     procedure FrameConfigLineChange(Sender: TObject);
+    procedure ButtonRestoreDefaultClick(Sender: TObject);
   private
     SerailBufferA: AnsiString;
     BurnOK: Boolean;
@@ -129,6 +131,12 @@ implementation
 uses UnitESP8266Protocol;
 
 {$R *.dfm}
+
+procedure TFormMain.ButtonRestoreDefaultClick(Sender: TObject);
+begin
+  InitDataChest;
+  // LoadDataChest;
+end;
 
 procedure TFormMain.ChangeIconFail;
 var
@@ -500,7 +508,7 @@ end;
 
 procedure TFormMain.FrameConfigLineChange(Sender: TObject);
 begin
-   SaveDataChest;
+  SaveDataChest;
 end;
 
 function TFormMain.SendByte(const Data: Byte): Boolean;
@@ -728,23 +736,66 @@ begin
   TStringChest[FrameConfigLine7.Name + '.FilePath'];
   TStringChest[FrameConfigLine1.Name + '.Offset'] := '0x00000';
   TStringChest[FrameConfigLine2.Name + '.Offset'] := '0x10000';
-  TStringChest[FrameConfigLine3.Name + '.Offset'] := '0xfc000';
-  TStringChest[FrameConfigLine4.Name + '.Offset'] := '0xfe000';
+  TStringChest[FrameConfigLine3.Name + '.Offset'] := '0x7C000';
+  TStringChest[FrameConfigLine4.Name + '.Offset'] := '0x7E000';
   TStringChest[FrameConfigLine5.Name + '.Offset'];
   TStringChest[FrameConfigLine6.Name + '.Offset'];
   TStringChest[FrameConfigLine7.Name + '.Offset'];
   TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  TBooleanChest[FrameConfigLine2.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine3.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine4.Name + '.Checked'] := True;
+  TBooleanChest[FrameConfigLine5.Name + '.Checked'];
+  TBooleanChest[FrameConfigLine6.Name + '.Checked'];
+  TBooleanChest[FrameConfigLine7.Name + '.Checked'];
   TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '115200';
   TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 1;
   TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] := 0;
   TStringChest.Publisher := 'NodeMCU Team. http://www.nodemcu.com';
-  TStringChest.SaveToXMLFile(ConfigFileName);
+  // TStringChest.SaveToXMLFile(ConfigFileName);
+  FrameConfigLine1.FilePath := TStringChest
+    [FrameConfigLine1.Name + '.FilePath'];
+  FrameConfigLine2.FilePath := TStringChest
+    [FrameConfigLine2.Name + '.FilePath'];
+  FrameConfigLine3.FilePath := TStringChest
+    [FrameConfigLine3.Name + '.FilePath'];
+  FrameConfigLine4.FilePath := TStringChest
+    [FrameConfigLine4.Name + '.FilePath'];
+  FrameConfigLine5.FilePath := TStringChest
+    [FrameConfigLine5.Name + '.FilePath'];
+  FrameConfigLine6.FilePath := TStringChest
+    [FrameConfigLine6.Name + '.FilePath'];
+  FrameConfigLine7.FilePath := TStringChest
+    [FrameConfigLine7.Name + '.FilePath'];
+  FrameConfigLine1.Offset := TStringChest[FrameConfigLine1.Name + '.Offset'];
+  FrameConfigLine2.Offset := TStringChest[FrameConfigLine2.Name + '.Offset'];
+  FrameConfigLine3.Offset := TStringChest[FrameConfigLine3.Name + '.Offset'];
+  FrameConfigLine4.Offset := TStringChest[FrameConfigLine4.Name + '.Offset'];
+  FrameConfigLine5.Offset := TStringChest[FrameConfigLine5.Name + '.Offset'];
+  FrameConfigLine6.Offset := TStringChest[FrameConfigLine6.Name + '.Offset'];
+  FrameConfigLine7.Offset := TStringChest[FrameConfigLine7.Name + '.Offset'];
+  FrameConfigLine1.CheckBoxEnable.Checked := True;
+  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine2.CheckBoxEnable.Checked := True;
+  TBooleanChest[FrameConfigLine2.Name + '.Checked'];
+  FrameConfigLine3.CheckBoxEnable.Checked := True;
+  TBooleanChest[FrameConfigLine3.Name + '.Checked'];
+  FrameConfigLine4.CheckBoxEnable.Checked := True;
+  TBooleanChest[FrameConfigLine4.Name + '.Checked'];
+  FrameConfigLine5.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine5.Name + '.Checked'];
+  FrameConfigLine6.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine6.Name + '.Checked'];
+  FrameConfigLine7.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine7.Name + '.Checked'];
+  ComboBoxFlashBaudrate.Text := TStringChest
+    [ComboBoxFlashBaudrate.Name + '.Text'];
+  ComboBoxFlashSize.ItemIndex :=
+    TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'];
+  ComboBoxFlashSpeed.ItemIndex :=
+    TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'];
+  SyncDataChest;
+  SaveDataChest;
 end;
 
 procedure TFormMain.SyncDataChest;
@@ -772,17 +823,17 @@ begin
   TStringChest[FrameConfigLine7.Name + '.Offset'] := FrameConfigLine7.Offset;
   TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
     FrameConfigLine1.CheckBoxEnable.Checked;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+  TBooleanChest[FrameConfigLine2.Name + '.Checked'] :=
     FrameConfigLine2.CheckBoxEnable.Checked;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+  TBooleanChest[FrameConfigLine3.Name + '.Checked'] :=
     FrameConfigLine3.CheckBoxEnable.Checked;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+  TBooleanChest[FrameConfigLine4.Name + '.Checked'] :=
     FrameConfigLine4.CheckBoxEnable.Checked;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+  TBooleanChest[FrameConfigLine5.Name + '.Checked'] :=
     FrameConfigLine5.CheckBoxEnable.Checked;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+  TBooleanChest[FrameConfigLine6.Name + '.Checked'] :=
     FrameConfigLine6.CheckBoxEnable.Checked;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'] :=
+  TBooleanChest[FrameConfigLine7.Name + '.Checked'] :=
     FrameConfigLine7.CheckBoxEnable.Checked;
   TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] :=
     ComboBoxFlashBaudrate.Text;
@@ -819,17 +870,17 @@ begin
   FrameConfigLine1.CheckBoxEnable.Checked :=
     TBooleanChest[FrameConfigLine1.Name + '.Checked'];
   FrameConfigLine2.CheckBoxEnable.Checked :=
-    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+    TBooleanChest[FrameConfigLine2.Name + '.Checked'];
   FrameConfigLine3.CheckBoxEnable.Checked :=
-    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+    TBooleanChest[FrameConfigLine3.Name + '.Checked'];
   FrameConfigLine4.CheckBoxEnable.Checked :=
-    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+    TBooleanChest[FrameConfigLine4.Name + '.Checked'];
   FrameConfigLine5.CheckBoxEnable.Checked :=
-    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+    TBooleanChest[FrameConfigLine5.Name + '.Checked'];
   FrameConfigLine6.CheckBoxEnable.Checked :=
-    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+    TBooleanChest[FrameConfigLine6.Name + '.Checked'];
   FrameConfigLine7.CheckBoxEnable.Checked :=
-    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+    TBooleanChest[FrameConfigLine7.Name + '.Checked'];
   ComboBoxFlashBaudrate.Text := TStringChest
     [ComboBoxFlashBaudrate.Name + '.Text'];
   ComboBoxFlashSize.ItemIndex :=
@@ -841,6 +892,7 @@ end;
 procedure TFormMain.SaveDataChest;
 begin
   SyncDataChest;
+  TStringChest.Publisher := 'NodeMCU Team. http://www.nodemcu.com';
   TStringChest.SaveToXMLFile(ConfigFileName);
 end;
 
@@ -931,7 +983,7 @@ begin
     // FrameConfigLine4.CheckBoxEnable.Checked := True;
 
     InitDataChest;
-    LoadDataChest;
+    // LoadDataChest;
   end;
 
   InitRichEdit;
