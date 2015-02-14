@@ -227,6 +227,33 @@ var
     end;
   end;
   procedure FlashStream(MemoryStream: TMemoryStream; BaseAddress: UInt32);
+  {
+    # write flash bin header
+    #============================
+    #  SPI FLASH PARAMS
+    #-------------------
+    #flash_mode=
+    #     0: QIO
+    #     1: QOUT
+    #     2: DIO
+    #     3: DOUT
+    #-------------------
+    #flash_clk_div=
+    #     0 :  80m / 2
+    #     1 :  80m / 3
+    #     2 :  80m / 4
+    #    0xf:  80m / 1
+    #-------------------
+    #flash_size=
+    #     0 : 512 KB
+    #     1 : 256 KB
+    #     2 : 1024 KB
+    #     3 : 2048 KB
+    #     4 : 4096 KB
+    #-------------------
+    #   END OF SPI FLASH PARAMS
+    #============================
+  }
     function GetFlashSpeedSizeByte: Byte;
     begin
       Result := $00;
@@ -249,6 +276,14 @@ var
       else if (ComboBoxFlashSize.Text = '4MByte') then
       begin
         Result := Result or $40;
+      end
+      else if (ComboBoxFlashSize.Text = '8MByte') then
+      begin
+        Result := Result or $50;
+      end
+      else if (ComboBoxFlashSize.Text = '16MByte') then
+      begin
+        Result := Result or $60;
       end;
       if (ComboBoxFlashSpeed.Text = '40MHz') then
       begin
@@ -774,14 +809,14 @@ begin
   FrameConfigLine5.Offset := TStringChest[FrameConfigLine5.Name + '.Offset'];
   FrameConfigLine6.Offset := TStringChest[FrameConfigLine6.Name + '.Offset'];
   FrameConfigLine7.Offset := TStringChest[FrameConfigLine7.Name + '.Offset'];
-  FrameConfigLine1.CheckBoxEnable.Checked := True;
-  TBooleanChest[FrameConfigLine1.Name + '.Checked'];
-  FrameConfigLine2.CheckBoxEnable.Checked := True;
-  TBooleanChest[FrameConfigLine2.Name + '.Checked'];
-  FrameConfigLine3.CheckBoxEnable.Checked := True;
-  TBooleanChest[FrameConfigLine3.Name + '.Checked'];
-  FrameConfigLine4.CheckBoxEnable.Checked := True;
-  TBooleanChest[FrameConfigLine4.Name + '.Checked'];
+  FrameConfigLine1.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine1.Name + '.Checked'];
+  FrameConfigLine2.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine2.Name + '.Checked'];
+  FrameConfigLine3.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine3.Name + '.Checked'];
+  FrameConfigLine4.CheckBoxEnable.Checked :=
+    TBooleanChest[FrameConfigLine4.Name + '.Checked'];
   FrameConfigLine5.CheckBoxEnable.Checked :=
     TBooleanChest[FrameConfigLine5.Name + '.Checked'];
   FrameConfigLine6.CheckBoxEnable.Checked :=
@@ -1001,7 +1036,7 @@ begin
     else
     begin
       CommMain.CommName := ComboBoxSerialPortA.Text;
-      if (ComboBoxFlashBaudrate.Text = '') then
+      if (ComboBoxFlashBaudrate.Text <> '') then
       begin
         CommMain.BaudRate := StrToInt(ComboBoxFlashBaudrate.Text);
       end
