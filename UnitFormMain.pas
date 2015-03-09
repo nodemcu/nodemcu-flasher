@@ -66,6 +66,8 @@ type
     ComboBoxFlashSpeed: TComboBox;
     LabelFlashSpeed: TLabel;
     ButtonRestoreDefault: TButton;
+    LabelSPIMode: TLabel;
+    ComboBoxSPIMode: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ActionBurnExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -267,8 +269,29 @@ var
         Result := Result or $F;
       end;
     end;
+    function GetSPIModeByte: Byte;
+    begin
+      Result := $00;
+      if (ComboBoxSPIMode.Text = 'QIO') then
+      begin
+        Result := $00;
+      end
+      else if (ComboBoxSPIMode.Text = 'QOUT') then
+      begin
+        Result := $01;
+      end
+      else if (ComboBoxSPIMode.Text = 'DIO') then
+      begin
+        Result := $02;
+      end
+      else if (ComboBoxSPIMode.Text = 'DOUT') then
+      begin
+        Result := $15;
+      end;
+    end;
 
   var
+    SPIModeByte: Byte;
     FlashSpeedSizeByte: Byte;
   begin
     MemoryStream.Position := 0;
@@ -320,6 +343,9 @@ var
       end;
       if (BaseAddress = 0) then
       begin
+        MemoryStream.Position := 2;
+        SPIModeByte := GetSPIModeByte;
+        MemoryStream.Write(SPIModeByte, 1);
         MemoryStream.Position := 3;
         FlashSpeedSizeByte := GetFlashSpeedSizeByte;
         MemoryStream.Write(FlashSpeedSizeByte, 1);
@@ -751,6 +777,7 @@ begin
   TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '115200';
   TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 1;
   TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] := 0;
+  TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'] := 0;
   TStringChest.Publisher := 'NodeMCU Team. http://www.nodemcu.com';
   // TStringChest.SaveToXMLFile(ConfigFileName);
   FrameConfigLine1.FilePath := TStringChest
@@ -794,6 +821,7 @@ begin
     TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'];
   ComboBoxFlashSpeed.ItemIndex :=
     TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'];
+  ComboBoxSPIMode.ItemIndex := TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'];
   SyncDataChest;
   SaveDataChest;
 end;
@@ -841,6 +869,7 @@ begin
     ComboBoxFlashSize.ItemIndex;
   TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] :=
     ComboBoxFlashSpeed.ItemIndex;
+  TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'] := ComboBoxSPIMode.ItemIndex;
 end;
 
 procedure TFormMain.LoadDataChest;
@@ -887,6 +916,7 @@ begin
     TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'];
   ComboBoxFlashSpeed.ItemIndex :=
     TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'];
+  ComboBoxSPIMode.ItemIndex := TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'];
 end;
 
 procedure TFormMain.SaveDataChest;

@@ -802,6 +802,19 @@ object FormMain: TFormMain
         Font.Style = []
         ParentFont = False
       end
+      object LabelSPIMode: TLabel
+        Left = 16
+        Top = 153
+        Width = 96
+        Height = 28
+        Caption = 'SPI Mode'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ParentFont = False
+      end
       object ComboBoxFlashBaudrate: TComboBox
         Left = 140
         Top = 24
@@ -894,13 +907,41 @@ object FormMain: TFormMain
           '80MHz')
       end
       object ButtonRestoreDefault: TButton
-        Left = 16
-        Top = 150
-        Width = 286
-        Height = 68
+        Left = 328
+        Top = 24
+        Width = 198
+        Height = 162
         Caption = 'Restore default'
         TabOrder = 3
         OnClick = ButtonRestoreDefaultClick
+      end
+      object ComboBoxSPIMode: TComboBox
+        Left = 140
+        Top = 150
+        Width = 162
+        Height = 36
+        Style = csDropDownList
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = #24494#36719#38597#40657
+        Font.Style = []
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+        ItemIndex = 0
+        ParentColor = True
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        TabStop = False
+        Text = 'QIO'
+        TextHint = 'Select speed'
+        OnChange = FrameConfigLineChange
+        Items.Strings = (
+          'QIO'
+          'DIO'
+          'QOUT'
+          'DOUT')
       end
     end
     object TabSheetIntroduction: TTabSheet
