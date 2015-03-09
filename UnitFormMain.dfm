@@ -876,7 +876,8 @@ object FormMain: TFormMain
           '1MByte'
           '2MByte'
           '4MByte'
-          '')
+          '8MByte'
+          '16MByte')
       end
       object ComboBoxFlashSpeed: TComboBox
         Left = 140
