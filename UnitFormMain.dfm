@@ -833,7 +833,7 @@ object FormMain: TFormMain
         ShowHint = True
         TabOrder = 0
         TabStop = False
-        Text = '115200'
+        Text = '576000'
         TextHint = 'Baudrate'
         OnChange = FrameConfigLineChange
         Items.Strings = (
@@ -1042,7 +1042,7 @@ object FormMain: TFormMain
     OnTimer = TimerStateMachineTimer
     Left = 368
   end
-  object IdHTTPNote: TIdHTTP
+  object IdHTTPUpdate: TIdHTTP
     AllowCookies = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
@@ -1059,8 +1059,7 @@ object FormMain: TFormMain
     Request.Ranges.Units = 'bytes'
     Request.Ranges = <>
     HTTPOptions = []
-    Left = 504
-    Top = 8
+    Left = 512
   end
   object TimerCode: TTimer
     Interval = 100

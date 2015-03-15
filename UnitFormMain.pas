@@ -55,7 +55,7 @@ type
     ImageQRCode: TImage;
     LabeledEditAPMAC: TLabeledEdit;
     LabeledEditSTAMAC: TLabeledEdit;
-    IdHTTPNote: TIdHTTP;
+    IdHTTPUpdate: TIdHTTP;
     RichEditNote: TRichEdit;
     TimerCode: TTimer;
     TabSheetAdvanced: TTabSheet;
@@ -788,27 +788,38 @@ end;
 
 procedure TFormMain.InitDataChest;
 begin
-  TStringChest[FrameConfigLine1.Name + '.FilePath'] := 'INTERNAL://FLASH';
-  TStringChest[FrameConfigLine2.Name + '.FilePath'] := 'INTERNAL://IROM';
-  TStringChest[FrameConfigLine3.Name + '.FilePath'] := 'INTERNAL://DEFAULT';
-  TStringChest[FrameConfigLine4.Name + '.FilePath'] := 'INTERNAL://BLANK';
+  TStringChest[FrameConfigLine1.Name + '.FilePath'] := 'INTERNAL://NODEMCU';
+  // 'INTERNAL://FLASH';
+  TStringChest[FrameConfigLine2.Name + '.FilePath'] := '';
+  // 'INTERNAL://IROM';
+  TStringChest[FrameConfigLine3.Name + '.FilePath'] := '';
+  // 'INTERNAL://DEFAULT';
+  TStringChest[FrameConfigLine4.Name + '.FilePath'] := '';
+  // 'INTERNAL://BLANK';
   TStringChest[FrameConfigLine5.Name + '.FilePath'];
   TStringChest[FrameConfigLine6.Name + '.FilePath'];
   TStringChest[FrameConfigLine7.Name + '.FilePath'];
   TStringChest[FrameConfigLine1.Name + '.Offset'] := '0x00000';
-  TStringChest[FrameConfigLine2.Name + '.Offset'] := '0x10000';
-  TStringChest[FrameConfigLine3.Name + '.Offset'] := '0x7C000';
-  TStringChest[FrameConfigLine4.Name + '.Offset'] := '0x7E000';
+  // '0x00000';
+  TStringChest[FrameConfigLine2.Name + '.Offset'] := '';
+  // '0x10000';
+  TStringChest[FrameConfigLine3.Name + '.Offset'] := '';
+  // '0x7C000';
+  TStringChest[FrameConfigLine4.Name + '.Offset'] := '';
+  // '0x7E000';
   TStringChest[FrameConfigLine5.Name + '.Offset'];
   TStringChest[FrameConfigLine6.Name + '.Offset'];
   TStringChest[FrameConfigLine7.Name + '.Offset'];
   TBooleanChest[FrameConfigLine1.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine2.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine3.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine4.Name + '.Checked'] := True;
-  TBooleanChest[FrameConfigLine5.Name + '.Checked'];
-  TBooleanChest[FrameConfigLine6.Name + '.Checked'];
-  TBooleanChest[FrameConfigLine7.Name + '.Checked'];
+  TBooleanChest[FrameConfigLine2.Name + '.Checked'] := False;
+  // True;
+  TBooleanChest[FrameConfigLine3.Name + '.Checked'] := False;
+  // True;
+  TBooleanChest[FrameConfigLine4.Name + '.Checked'] := False;
+  // True;
+  TBooleanChest[FrameConfigLine5.Name + '.Checked'] := False;
+  TBooleanChest[FrameConfigLine6.Name + '.Checked'] := False;
+  TBooleanChest[FrameConfigLine7.Name + '.Checked'] := False;
   TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '115200';
   TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 1;
   TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] := 0;
@@ -964,56 +975,56 @@ end;
 procedure TFormMain.LoadSettings;
 var
   FileName: string;
-  procedure InitNote;
-{$J+}
-  const
-    HaveShowed: Boolean = False;
-{$J-}
-  begin
-
-    if (Not HaveShowed) then
-    begin
-      HaveShowed := True;
-      TThread.CreateAnonymousThread(
-        procedure
-        const
-          MAGIC_TIP = 'MAGIC_TIP_THIS_USER';
-        var
-          RespData: TStringStream;
-          NoteStr: String;
-        begin
-          RespData := TStringStream.Create('', TEncoding.GetEncoding(65001));
-          try
-            try
-              IdHTTPNote.Get
-                ('http://www.vowstar.com/lambdadriver/2014/nodemcu/?version=20141205',
-                RespData);
-              NoteStr := RespData.DataString;
-              if (Pos(MAGIC_TIP, NoteStr) <> 0) then
-              begin
-                NoteStr := ReplaceStr(NoteStr, MAGIC_TIP, '');
-                TThread.Synchronize(nil,
-                  procedure
-                  begin
-                    ShowMessage(NoteStr);
-                  end);
-              end
-              else if (Length(NoteStr) > 10) then
-              begin
-                TThread.Synchronize(nil,
-                  procedure
-                  begin
-                    RichEditNote.Text := NoteStr;
-                  end);
-              end;
-            except
-            end;
-          finally
-            FreeAndNil(RespData);
-          end;
-        end).Start;
-    end;
-  end;
+  // procedure InitNote;
+  // {$J+}
+  // const
+  // HaveShowed: Boolean = False;
+  // {$J-}
+  // begin
+  //
+  // if (Not HaveShowed) then
+  // begin
+  // HaveShowed := True;
+  // TThread.CreateAnonymousThread(
+  // procedure
+  // const
+  // MAGIC_TIP = 'MAGIC_TIP_THIS_USER';
+  // var
+  // RespData: TStringStream;
+  // NoteStr: String;
+  // begin
+  // RespData := TStringStream.Create('', TEncoding.GetEncoding(65001));
+  // try
+  // try
+  // IdHTTPNote.Get
+  // ('http://www.vowstar.com/lambdadriver/2014/nodemcu/?version=20141205',
+  // RespData);
+  // NoteStr := RespData.DataString;
+  // if (Pos(MAGIC_TIP, NoteStr) <> 0) then
+  // begin
+  // NoteStr := ReplaceStr(NoteStr, MAGIC_TIP, '');
+  // TThread.Synchronize(nil,
+  // procedure
+  // begin
+  // ShowMessage(NoteStr);
+  // end);
+  // end
+  // else if (Length(NoteStr) > 10) then
+  // begin
+  // TThread.Synchronize(nil,
+  // procedure
+  // begin
+  // RichEditNote.Text := NoteStr;
+  // end);
+  // end;
+  // except
+  // end;
+  // finally
+  // FreeAndNil(RespData);
+  // end;
+  // end).Start;
+  // end;
+  // end;
   procedure InitRichEdit;
   var
     mask: Word;
@@ -1052,7 +1063,7 @@ begin
   end;
 
   InitRichEdit;
-  InitNote;
+  // InitNote;
 end;
 
 procedure TFormMain.ActionBurnExecute(Sender: TObject);
@@ -1072,7 +1083,7 @@ begin
       end
       else
       begin
-        CommMain.BaudRate := 115200;
+        CommMain.BaudRate := 576000;
       end;
       // CommMain.BaudRate := StrToInt(ComboBoxFlashBaudrate.Text);
       // CommMain.BaudRate := 115200; // 42s To Flash

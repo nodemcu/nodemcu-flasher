@@ -113,10 +113,23 @@ object FrameConfigLine: TFrameConfigLine
       OnKeyPress = ComboBoxOffsetKeyPress
       Items.Strings = (
         '0x00000'
+        '0x01000'
+        '0x10000'
+        '0x1FC000'
+        '0x1FE000'
+        '0x3C000'
         '0x3E000'
+        '0x3FC000'
+        '0x3FE000'
         '0x40000'
         '0x7C000'
-        '0x7E000')
+        '0x7E000'
+        '0x7FC000'
+        '0x7FE000'
+        '0xFC000'
+        '0xFE000'
+        '0xFFC000'
+        '0xFFE000')
     end
     object ImageOpenFile: TImage
       Left = 244

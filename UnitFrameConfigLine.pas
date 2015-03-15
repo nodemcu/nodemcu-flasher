@@ -1,11 +1,11 @@
-{*******************************************************}
-{                    配置行框架单元                     }
-{*******************************************************}
-{*******************************************************}
-{ 本软件使用MIT协议.                                    }
-{ 发布本软件的目的是希望它能够在一定程度上帮到您.       }
-{ 编写者: Vowstar <vowstar@gmail.com>, NODEMCU开发组.   }
-{*******************************************************}
+{ ******************************************************* }
+{ 配置行框架单元 }
+{ ******************************************************* }
+{ ******************************************************* }
+{ 本软件使用MIT协议. }
+{ 发布本软件的目的是希望它能够在一定程度上帮到您. }
+{ 编写者: Vowstar <vowstar@gmail.com>, NODEMCU开发组. }
+{ ******************************************************* }
 unit UnitFrameConfigLine;
 
 interface
@@ -159,19 +159,19 @@ begin
       end
       else if (CharInSet(Key, ['X', 'x'])) then
       begin
-        if (((length(ComboBoxOffset.Text) = 1) or (ComboBoxOffset.SelStart = 1))
-          And (ComboBoxOffset.Text[1] = '0')) then
-        begin
-          Key := 'x';
-        end
-        else
-        begin
-          Key := #0;
-        end;
-      end
-      else
-      begin
-        Key := #0;
+        // if (((length(ComboBoxOffset.Text) = 1) or (ComboBoxOffset.SelStart = 1))
+        // And (ComboBoxOffset.Text[1] = '0')) then
+        // begin
+        Key := 'x';
+        // end
+        // else
+        // begin
+        // Key := #0;
+        // end;
+        // end
+        // else
+        // begin
+        // Key := #0;
       end;
 end;
 
