@@ -1038,7 +1038,7 @@ object FormMain: TFormMain
   end
   object TimerStateMachine: TTimer
     Enabled = False
-    Interval = 200
+    Interval = 50
     OnTimer = TimerStateMachineTimer
     Left = 368
   end

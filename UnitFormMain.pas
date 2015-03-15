@@ -820,7 +820,7 @@ begin
   TBooleanChest[FrameConfigLine5.Name + '.Checked'] := False;
   TBooleanChest[FrameConfigLine6.Name + '.Checked'] := False;
   TBooleanChest[FrameConfigLine7.Name + '.Checked'] := False;
-  TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '115200';
+  TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '576000';
   TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 1;
   TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] := 0;
   TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'] := 0;
@@ -1103,6 +1103,11 @@ begin
         ChangeIconWait;
         MemoOutput.Lines.Add('Note:Begin find ESP8266.');
         ButtonBurn.Caption := 'Stop(&S)';
+        // Set RTS to HIGH
+        CommMain.RtsControl := TRtsControl.RtsDisable;
+        // Set DTR to HIGH
+        CommMain.DtrControl := TDtrControl.DtrDisable;
+        Sleep(100);
         // Set RTS to LOW
         CommMain.RtsControl := TRtsControl.RtsEnable;
         // Set DTR to LOW
