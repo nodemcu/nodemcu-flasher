@@ -1096,6 +1096,7 @@ begin
       CommMain.StartComm;
       if (CommMain.PortOpen) then
       begin
+        ProgressBarStatus.Position := ProgressBarStatus.Min;
         MemoOutput.Lines.Add('Note:Serial port connected.');
         BurnOK := False;
         RunState := StateHandshake;

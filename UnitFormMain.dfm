@@ -833,7 +833,7 @@ object FormMain: TFormMain
         ShowHint = True
         TabOrder = 0
         TabStop = False
-        Text = '576000'
+        Text = '115200'
         TextHint = 'Baudrate'
         OnChange = FrameConfigLineChange
         Items.Strings = (
@@ -964,17 +964,15 @@ object FormMain: TFormMain
         Font.Name = #24494#36719#38597#40657
         Font.Style = []
         Lines.Strings = (
-          'What can NodeMcu do?'
+          'If you have any questions, please contact me.'
+          'Vowstar <vowstar@gmail.com>'
           'NodeMcu is a powerful tool for software engineers'
           'to program from HardwareIO to Wifi network within'
           'several minites.'
-          'How I can use it?'
-          'NodeMcu use Lua Program Language, you can download'
-          'your lua code with NodeMcu studio, or you can'
-          'update your code with Telnet which we provided as'
-          'an example code.'
-          'What'#39's next? ...'
-          'Our Tencent QQ Group:309957875')
+          'This programmer can flash esp8266 by one click.'
+          'Our website is http://www.nodemcu.com'
+          'Our Tencent QQ Group:309957875.'
+          '')
         ParentColor = True
         ParentCtl3D = False
         ParentFont = False
