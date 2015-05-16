@@ -922,10 +922,10 @@ begin
   TBooleanChest[FrameConfigLine5.Name + '.Checked'] := False;
   TBooleanChest[FrameConfigLine6.Name + '.Checked'] := False;
   TBooleanChest[FrameConfigLine7.Name + '.Checked'] := False;
-  TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '576000';
-  TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 1;
+  TStringChest[ComboBoxFlashBaudrate.Name + '.Text'] := '230400';
+  TIntChest[ComboBoxFlashSize.Name + '.ItemIndex'] := 4;
   TIntChest[ComboBoxFlashSpeed.Name + '.ItemIndex'] := 0;
-  TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'] := 0;
+  TIntChest[ComboBoxSPIMode.Name + '.ItemIndex'] := 1;
   TStringChest.Publisher := 'NodeMCU Team. http://www.nodemcu.com';
   // TStringChest.SaveToXMLFile(ConfigFileName);
   FrameConfigLine1.FilePath := TStringChest

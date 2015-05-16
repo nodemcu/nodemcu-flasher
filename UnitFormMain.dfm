@@ -832,7 +832,7 @@ object FormMain: TFormMain
         ShowHint = True
         TabOrder = 0
         TabStop = False
-        Text = '576000'
+        Text = '230400'
         TextHint = 'Baudrate'
         OnChange = FrameConfigLineChange
         Items.Strings = (
