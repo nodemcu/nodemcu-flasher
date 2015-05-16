@@ -116,7 +116,7 @@ type
     procedure WriteMACFile(const MACStr: string; const FileName: string);
     function GetConfigDir: string;
     function GetConfigFileName: string;
-
+    function GetFlashSizeByBytes: UInt32;
     { Private declarations }
   public
     { Public declarations }
@@ -194,6 +194,8 @@ var
   I: Integer;
   J: Integer;
   TrueSize: Integer;
+  AlignedTrueSize: UInt32;
+  DIOFlag: Boolean;
   procedure ReadReg(Address: UInt32);
   begin
     RawByte := '';
@@ -214,9 +216,9 @@ var
     TimeOutCounter := 0;
     while ((not BurnOK) and (not LastOperationSuccess)) do
     begin
-      Sleep(10);
+      Sleep(1);
       Inc(TimeOutCounter);
-      if (TimeOutCounter > 1000) then
+      if (TimeOutCounter > 5000) then
       begin
         BurnOK := True;
         TThread.Synchronize(nil,
@@ -247,11 +249,13 @@ var
     #    0xf:  80m / 1
     #-------------------
     #flash_size=
-    #     0 : 512 KB
-    #     1 : 256 KB
-    #     2 : 1024 KB
-    #     3 : 2048 KB
-    #     4 : 4096 KB
+    #     0 : 512 kB  (256kB + 256 kB)
+    #     1 : 256 kB
+    #     2 : 1 MB    (512kB + 512 kB)
+    #     3 : 2 MB    (512kB + 512 kB)
+    #     4 : 4 MB    (512kB + 512 kB)
+    #     5 : 2 MB C1 (1024kB + 1024 kB)
+    #     6 : 4 MB C1 (1024kB + 1024 kB)
     #-------------------
     #   END OF SPI FLASH PARAMS
     #============================
@@ -279,11 +283,11 @@ var
       begin
         Result := Result or $40;
       end
-      else if (ComboBoxFlashSize.Text = '8MByte') then
+      else if (ComboBoxFlashSize.Text = '2MByte-C1') then
       begin
         Result := Result or $50;
       end
-      else if (ComboBoxFlashSize.Text = '16MByte') then
+      else if (ComboBoxFlashSize.Text = '4MByte-C1') then
       begin
         Result := Result or $60;
       end;
@@ -363,9 +367,9 @@ var
       TimeOutCounter := 0;
       while ((not BurnOK) and (not LastOperationSuccess)) do
       begin
-        Sleep(10);
+        Sleep(1);
         Inc(TimeOutCounter);
-        if (TimeOutCounter > 1000) then
+        if (TimeOutCounter > 5000) then
         begin
           BurnOK := True;
           TThread.Synchronize(nil,
@@ -387,6 +391,7 @@ var
       end;
       Buffer := '';
       SetLength(Buffer, 1024);
+      FillChar(Buffer[1], 1024, $FF);
       MemoryStream.Position := 0;
       I := 0;
       TrueSize := MemoryStream.Read((@Buffer[1])^, 1024);
@@ -399,16 +404,35 @@ var
           end);
         RawByte := '';
         RawByte := ESP_SEND_DATA;
-        PEspSendData(@RawByte[1])^.DataLen := Trunc(4 * Ceil(TrueSize / 4));
+        // PEspSendData(@RawByte[1])^.DataLen := Trunc(4 * Ceil(TrueSize / 4));
+
+        if (TrueSize mod 4 = 0) then
+        begin
+          AlignedTrueSize := TrueSize;
+        end
+        else
+        begin
+          AlignedTrueSize := (TrueSize + 4) and $FFFFFFFC;
+        end;
+        PEspSendData(@RawByte[1])^.DataLen := AlignedTrueSize;
         PEspSendData(@RawByte[1])^.PacketLen := PEspSendData(@RawByte[1])
           ^.DataLen + 16;
         PEspSendData(@RawByte[1])^.SectorIndex := I;
-        SetLength(Buffer, Trunc(4 * Ceil(TrueSize / 4)));
+        SetLength(Buffer, AlignedTrueSize);
+        if (AlignedTrueSize > TrueSize) then
+        begin
+          FillChar(Buffer[Length(Buffer) + TrueSize - AlignedTrueSize + 1],
+            AlignedTrueSize - TrueSize, $FF);
+        end;
         PEspSendData(@RawByte[1])^.XorCheck := GetXorCheck(Buffer);
-        Buffer := GetBufferCleanTail(Buffer);
-        RawByte := MidStr(RawByte, 2, Length(RawByte) - 1);
-        RawByte := #$C0 + GetBufferCleanTail(RawByte);
-        RawByte := RawByte + Buffer + #$C0;
+        // Buffer := GetBufferCleanTail(Buffer);
+        RawByte := RawByte + Buffer + ESP_PROTOCOL_IDENTIFIER;
+        RawByte := MidStr(RawByte, 2, Length(RawByte) - 2);
+        RawByte := ESP_PROTOCOL_IDENTIFIER + GetBufferCleanTail(RawByte) +
+          ESP_PROTOCOL_IDENTIFIER;
+        // RawByte := MidStr(RawByte, 2, Length(RawByte) - 1);
+        // RawByte := #$C0 + GetBufferCleanTail(RawByte);
+        // RawByte := RawByte + Buffer + #$C0;
         CommMain.WriteCommData(PAnsiChar(RawByte), Length(RawByte));
         // TThread.Synchronize(nil,
         // procedure
@@ -418,9 +442,9 @@ var
         TimeOutCounter := 0;
         while ((not BurnOK) and (not LastOperationSuccess)) do
         begin
-          Sleep(10);
+          Sleep(1);
           Inc(TimeOutCounter);
-          if (TimeOutCounter > 1000) then
+          if (TimeOutCounter > 5000) then
           begin
             BurnOK := True;
             TThread.Queue(nil,
@@ -488,7 +512,7 @@ begin
           FormatdateTime('yyyymmddhhnnss".png"', Now));
       end;
     end);
-  for J := 1 to 7 do
+  for J := 1 to 8 do
   begin
     case J of
       1:
@@ -522,10 +546,47 @@ begin
     end;
     if (not BurnOK) then
     begin
-      MemoryStream := TMemoryStream.Create;;
-      if (GetMemoryStreamAndBaseAddress(MemoryStream, BaseAddress,
-        FrameConfigLine)) then
-        FlashStream(MemoryStream, BaseAddress);
+      MemoryStream := TMemoryStream.Create;
+      if (I < 8) then
+      begin
+        if (GetMemoryStreamAndBaseAddress(MemoryStream, BaseAddress,
+          FrameConfigLine)) then
+          FlashStream(MemoryStream, BaseAddress);
+      end
+      else
+      begin
+{$IFDEF BURNDIOCODE}
+        DIOFlag := False;
+        TThread.Synchronize(nil,
+          procedure
+          const
+            DioBytes: Array [0 .. 31] of Byte = ($01, $FF, $FF, $FF, $AA, $55,
+              $AA, $55, $01, $00, $00, $00, $FF, $FF, $FF, $FF, $1C, $00, $00,
+              $00, $FF, $FF, $FF, $FF, $F2, $00, $00, $00, $FF, $FF, $FF, $FF);
+          var
+            StreamIndex: Integer;
+            StreamByte: Byte;
+          begin
+            if (ComboBoxSPIMode.Text = 'DIO') then
+            begin
+              MemoryStream.Position := 0;
+              MemoryStream.SetSize($2000);
+              StreamByte := $FF;
+              for StreamIndex := 0 to $2000 - 1 do
+              begin
+                MemoryStream.Write(StreamByte, 1);
+              end;
+              MemoryStream.Position := $1000;
+              MemoryStream.Write(DioBytes, 32);
+              DIOFlag := True;
+              MemoryStream.Position := 0;
+            end;
+            BaseAddress := GetFlashSizeByBytes - $2000;
+          end);
+        if (DIOFlag) then
+          FlashStream(MemoryStream, BaseAddress);
+{$ENDIF} // BURNDIOCODE
+      end;
       MemoryStream.Free;
     end;
   end;
@@ -697,6 +758,47 @@ begin
   else
     Temp := '';
   Result := Temp;
+end;
+
+function TFormMain.GetFlashSizeByBytes: UInt32;
+begin
+  Result := $00000000;
+  if (ComboBoxFlashSize.Text = '512kByte') then
+  begin
+    Result := $00080000;
+  end
+  else if (ComboBoxFlashSize.Text = '256kByte') then
+  begin
+    Result := $00040000;
+  end
+  else if (ComboBoxFlashSize.Text = '1MByte') then
+  begin
+    Result := $00100000;
+  end
+  else if (ComboBoxFlashSize.Text = '2MByte') then
+  begin
+    Result := $00200000;
+  end
+  else if (ComboBoxFlashSize.Text = '4MByte') then
+  begin
+    Result := $00400000;
+  end
+  else if (ComboBoxFlashSize.Text = '8MByte') then
+  begin
+    Result := $00800000;
+  end
+  else if (ComboBoxFlashSize.Text = '16MByte') then
+  begin
+    Result := $01000000;
+  end
+  else if (ComboBoxFlashSize.Text = '2MByte-C1') then
+  begin
+    Result := $00200000;
+  end
+  else if (ComboBoxFlashSize.Text = '4MByte-C1') then
+  begin
+    Result := $00400000;
+  end;
 end;
 
 procedure TFormMain.GetRegValue(Frame: AnsiString);
@@ -1286,17 +1388,18 @@ begin
             // Set DTR, RTS to LOW
             CommMain.DtrControl := TDtrControl.DtrEnable;
             CommMain.RtsControl := TRtsControl.RtsEnable;
-
-            DelayMsEx(10);
+            Sleep(100);
+            Application.ProcessMessages;
             // Set DTR, HIGH -> RST LOW
             CommMain.DtrControl := TDtrControl.DtrDisable;
-            DelayMsEx(10);
+            Sleep(100);
+            Application.ProcessMessages;
             // Set RTS, HIGH -> RST HIGH
             CommMain.RtsControl := TRtsControl.RtsDisable;
             // Set DTR, LOW  -> GPIO LOW
             CommMain.DtrControl := TDtrControl.DtrEnable;
-
-            Sleep(50);
+            Sleep(100);
+            Application.ProcessMessages;
           end;
 {$ENDIF}
           SendString(ESP_HANDSHAKE);
@@ -1310,7 +1413,14 @@ begin
         end;
       StateRun:
         begin
+{$IFDEF BURNTORUN}
           SendString(ESP_RUN);
+{$ELSE}
+          RunState := StateFinished;
+          ChangeIconSuccess;
+          if (CommMain.PortOpen) then
+            ButtonBurn.OnClick(Self);
+{$ENDIF}
           RunState := StateFinished;
         end;
       StateFinished:
@@ -1413,6 +1523,7 @@ begin
         MemoOutput.Lines.Add('Note:Program flash success.');
         LastOperationSuccess := True;
       end;
+{$IFDEF BURNTORUN}
       if (Pos(LeftStr(ESP_RUN_ACK, 5), SerailBufferA) <> 0) then
       begin
         MemoOutput.Lines.Add('Note:Program success, run user code.');
@@ -1421,7 +1532,7 @@ begin
         if (CommMain.PortOpen) then
           ButtonBurn.OnClick(Self);
       end;
-
+{$ENDIF}
       // MemoOutput.Lines.Add
       // ('Left:' + GetUnicodeHex(LeftStr(ESP_READ_REG_ACK, 5)));
 

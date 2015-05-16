@@ -826,14 +826,13 @@ object FormMain: TFormMain
         Font.Name = #24494#36719#38597#40657
         Font.Style = []
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-        ItemIndex = 5
         ParentColor = True
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
         TabStop = False
-        Text = '115200'
+        Text = '576000'
         TextHint = 'Baudrate'
         OnChange = FrameConfigLineChange
         Items.Strings = (
@@ -846,6 +845,7 @@ object FormMain: TFormMain
           '230400'
           '460800'
           '512000'
+          '576000'
           '921600')
       end
       object ComboBoxFlashSize: TComboBox
