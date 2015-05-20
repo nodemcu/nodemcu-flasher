@@ -1383,22 +1383,28 @@ begin
           end;
 {$ENDIF}
 {$IFDEF TRIODEMODE}
-          if (HandshakeCount mod 20 = 0) then
+          if (HandshakeCount mod 10 = 0) then
           begin
             // Set DTR, RTS to LOW
             CommMain.DtrControl := TDtrControl.DtrEnable;
             CommMain.RtsControl := TRtsControl.RtsEnable;
-            Sleep(100);
             Application.ProcessMessages;
+            Sleep(10);
+
             // Set DTR, HIGH -> RST LOW
             CommMain.DtrControl := TDtrControl.DtrDisable;
-            Sleep(100);
             Application.ProcessMessages;
+            Sleep(10);
+
             // Set RTS, HIGH -> RST HIGH
-            CommMain.RtsControl := TRtsControl.RtsDisable;
+            // CommMain.RtsControl := TRtsControl.RtsDisable;
             // Set DTR, LOW  -> GPIO LOW
-            CommMain.DtrControl := TDtrControl.DtrEnable;
-            Sleep(100);
+            // CommMain.DtrControl := TDtrControl.DtrEnable;
+            // Speed up for CP2102
+            CommMain.SetDtrRtsControl(TDtrControl.DtrEnable,
+              TRtsControl.RtsDisable);
+            Application.ProcessMessages;
+            Sleep(50);
             Application.ProcessMessages;
           end;
 {$ENDIF}

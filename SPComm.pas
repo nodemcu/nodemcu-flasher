@@ -153,7 +153,7 @@ type
 
   TComm = class(TComponent)
   private
-    {Private declarations}
+    { Private declarations }
     ReadThread: TReadThread;
     WriteThread: TWriteThread;
     hCommFile: THandle;
@@ -239,7 +239,7 @@ type
     procedure _SetCommState;
     procedure _SetCommTimeout;
   protected
-    {Protected declarations}
+    { Protected declarations }
     procedure CloseReadThread;
     procedure CloseWriteThread;
     procedure ReceiveData(Buffer: PAnsiChar; BufferLength: Word);
@@ -248,7 +248,7 @@ type
     procedure RequestHangup;
     procedure _SendDataEmpty;
   public
-    {Public declarations}
+    { Public declarations }
     property Handle: THandle read hCommFile;
     property SendDataEmpty: Boolean read FSendDataEmpty;
     constructor Create(AOwner: TComponent); override;
@@ -258,8 +258,10 @@ type
     function WriteCommData(pDataToWrite: PAnsiChar;
       dwSizeofDataToWrite: Word): Boolean;
     function GetModemState: DWORD;
+    procedure SetDtrRtsControl(DtrControl: TDtrControl;
+      RtsControl: TRtsControl);
   published
-    {Published declarations}
+    { Published declarations }
     // --------------------------------------------------------------------------------
     property PortOpen: Boolean read GetPortOpen write SetPortOpen default False;
     // 追加端口号属性
@@ -345,9 +347,9 @@ procedure Register;
 
 implementation
 
-(******************************************************************************)
+(* **************************************************************************** *)
 // TComm PUBLIC METHODS
-(******************************************************************************)
+(* **************************************************************************** *)
 
 constructor TComm.Create(AOwner: TComponent);
 begin
@@ -442,10 +444,10 @@ begin
 
   hNewCommFile := CreateFile(PChar('//./' + FCommName), GENERIC_READ or
     GENERIC_WRITE, 0,
-    {not shared}
-    nil, {no security ??}
+    { not shared }
+    nil, { no security ?? }
     OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL or FILE_FLAG_OVERLAPPED,
-    0 {template} );
+    0 { template } );
 
   if hNewCommFile = INVALID_HANDLE_VALUE then
   begin
@@ -502,7 +504,7 @@ begin
 
   // Create the Read thread.
   try
-    ReadThread := TReadThread.Create(True {suspended} );
+    ReadThread := TReadThread.Create(True { suspended } );
   except
     ReadThread := nil;
     CloseHandle(hCloseEvent);
@@ -528,7 +530,7 @@ begin
 
   // Create the Write thread.
   try
-    WriteThread := TWriteThread.Create(True {suspended} );
+    WriteThread := TWriteThread.Create(True { suspended } );
   except
     CloseReadThread;
     WriteThread := nil;
@@ -550,7 +552,7 @@ begin
   WriteThread.Start;
 
   // Everything was created ok.  Ready to go!
-end; {TComm.StartComm}
+end; { TComm.StartComm }
 
 //
 // FUNCTION: StopComm
@@ -587,7 +589,7 @@ begin
   // Now close the comm port handle.
   CloseHandle(hCommFile);
   hCommFile := 0
-end; {TComm.StopComm}
+end; { TComm.StopComm }
 
 //
 // FUNCTION: WriteCommData(PAnsiChar, Word)
@@ -635,7 +637,7 @@ begin
   end;
 
   Result := False
-end; {TComm.WriteCommData}
+end; { TComm.WriteCommData }
 
 procedure TComm.SetOutput(Buffer: AnsiString);
 begin
@@ -699,9 +701,9 @@ begin
     Result := dwModemState
 end;
 
-(******************************************************************************)
+(* **************************************************************************** *)
 // TComm PROTECTED METHODS
-(******************************************************************************)
+(* **************************************************************************** *)
 
 //
 // FUNCTION: CloseReadThread
@@ -742,7 +744,7 @@ begin
     ReadThread.Free;
     ReadThread := nil
   end
-end; {TComm.CloseReadThread}
+end; { TComm.CloseReadThread }
 
 //
 // FUNCTION: CloseWriteThread
@@ -784,7 +786,7 @@ begin
     WriteThread.Free;
     WriteThread := nil
   end
-end; {TComm.CloseWriteThread}
+end; { TComm.CloseWriteThread }
 
 procedure TComm.ReceiveData(Buffer: PAnsiChar; BufferLength: Word);
 begin
@@ -816,9 +818,9 @@ begin
     FOnSendDataEmpty(self)
 end;
 
-(******************************************************************************)
+(* **************************************************************************** *)
 // TComm PRIVATE METHODS
-(******************************************************************************)
+(* **************************************************************************** *)
 
 procedure TComm.CommWndProc(var msg: TMessage);
 begin
@@ -855,7 +857,7 @@ begin
 
   // fAbortOnError is the only DCB dependancy in TapiComm.
   // Can't guarentee that the SP will set this to what we expect.
-  {dcb.fAbortOnError := False; NOT VALID}
+  { dcb.fAbortOnError := False; NOT VALID }
 
   dcb.BaudRate := FBaudRate;
 
@@ -1022,6 +1024,17 @@ begin
 
   FDtrControl := c;
 
+  if hCommFile <> 0 then
+    _SetCommState
+end;
+
+procedure TComm.SetDtrRtsControl(DtrControl: TDtrControl;
+  RtsControl: TRtsControl);
+begin
+  if ((DtrControl = FDtrControl) and (RtsControl = FRtsControl)) then
+    Exit;
+  FDtrControl := DtrControl;
+  FRtsControl := RtsControl;
   if hCommFile <> 0 then
     _SetCommState
 end;
@@ -1246,9 +1259,9 @@ begin
     _SetCommTimeout
 end;
 
-(******************************************************************************)
+(* **************************************************************************** *)
 // READ THREAD
-(******************************************************************************)
+(* **************************************************************************** *)
 
 //
 // PROCEDURE: TReadThread.Execute
@@ -1368,7 +1381,7 @@ begin
           // Start waiting for the next CommEvent.
           if not SetupCommEvent(@overlappedCommEvent, fdwEvtMask) then
             goto EndReadThread
-            {break;??}
+            { break;?? }
         end;
 
       WAIT_OBJECT_0 + 2: // Read Event signaled.
@@ -1384,7 +1397,7 @@ begin
             // 新方法不能用@szInputBuffer
             FInputLen, nNumberOfBytesRead) then
             goto EndReadThread
-            {break;}
+            { break; }
         end;
 
       WAIT_FAILED: // Wait failed.  Shouldn't happen.
@@ -1397,8 +1410,8 @@ begin
         PostHangupCall;
         goto EndReadThread
       end
-    end {case dwHandleSignaled}
-  end; {while True}
+    end { case dwHandleSignaled }
+  end; { while True }
 
   // Time to clean up Read Thread.
 EndReadThread:
@@ -1406,7 +1419,7 @@ EndReadThread:
   PurgeComm(hCommFile, PURGE_RXABORT + PURGE_RXCLEAR);
   CloseHandle(overlappedRead.hEvent);
   CloseHandle(overlappedCommEvent.hEvent)
-end; {TReadThread.Execute}
+end; { TReadThread.Execute }
 
 //
 // FUNCTION: SetupReadEvent(LPOVERLAPPED, LPSTR, DWORD, LPDWORD)
@@ -1483,7 +1496,7 @@ StartSetupReadEvent:
 
   // Unexpected error come here. No idea what could cause this to happen.
   PostHangupCall
-end; {TReadThread.SetupReadEvent}
+end; { TReadThread.SetupReadEvent }
 
 //
 // FUNCTION: HandleReadData(LPCSTR, DWORD)
@@ -1524,7 +1537,7 @@ begin
 
     lpszPostedBytes := PAnsiChar(LocalAlloc(LPTR, dwSizeofBuffer + 1));
 
-    if lpszPostedBytes = nil {NULL} then
+    if lpszPostedBytes = nil { NULL } then
     begin
       // Out of memory
 
@@ -1537,7 +1550,7 @@ begin
 
     Result := ReceiveData(lpszPostedBytes, dwSizeofBuffer)
   end
-end; {TReadThread.HandleReadData}
+end; { TReadThread.HandleReadData }
 
 //
 // FUNCTION: HandleReadEvent(LPOVERLAPPED, LPSTR, DWORD, LPDWORD)
@@ -1588,7 +1601,7 @@ begin
 
   // Unexpected error come here. No idea what could cause this to happen.
   PostHangupCall
-end; {TReadThread.HandleReadEvent}
+end; { TReadThread.HandleReadEvent }
 
 //
 // FUNCTION: SetupCommEvent(LPOVERLAPPED, LPDWORD)
@@ -1635,7 +1648,7 @@ StartSetupCommEvent:
 
     if not HandleCommEvent(nil, lpfdwEvtMask, False) then
     begin
-      {??? GetOverlappedResult does not handle "NIL" as defined by Borland}
+      { ??? GetOverlappedResult does not handle "NIL" as defined by Borland }
       Exit
     end;
 
@@ -1662,7 +1675,7 @@ StartSetupCommEvent:
 
   // Unexpected error. No idea what could cause this to happen.
   PostHangupCall
-end; {TReadThread.SetupCommEvent}
+end; { TReadThread.SetupCommEvent }
 
 //
 // FUNCTION: HandleCommEvent(LPOVERLAPPED, LPDWORD, BOOL)
@@ -1773,7 +1786,7 @@ begin
     // Should not have gotten here.
     PostHangupCall
   end
-end; {TReadThread.HandleCommEvent}
+end; { TReadThread.HandleCommEvent }
 
 function TReadThread.ReceiveData(lpNewString: LPSTR;
   dwSizeofNewString: DWORD): BOOL;
@@ -1813,9 +1826,9 @@ begin
   PostMessage(hComm32Window, PWM_REQUESTHANGUP, 0, 0)
 end;
 
-(******************************************************************************)
+(* **************************************************************************** *)
 // WRITE THREAD
-(******************************************************************************)
+(* **************************************************************************** *)
 
 //
 // PROCEDURE: TWriteThread.Execute
@@ -1847,7 +1860,7 @@ label
   EndWriteThread;
 begin
   // Needed for overlapped I/O.
-  FillChar(overlappedWrite, Sizeof(overlappedWrite), 0); {0, 0, 0, 0, NULL}
+  FillChar(overlappedWrite, Sizeof(overlappedWrite), 0); { 0, 0, 0, 0, NULL }
 
   overlappedWrite.hEvent := CreateEvent(nil, True, True, nil);
   if overlappedWrite.hEvent = 0 then
@@ -1916,7 +1929,7 @@ begin
     // Process the message.
     // This could happen if a dialog is created on this thread.
     // This doesn't occur in this sample, but might if modified.
-    if msg.hwnd <> 0 {NULL} then
+    if msg.hwnd <> 0 { NULL } then
     begin
       TranslateMessage(msg);
       DispatchMessage(msg);
@@ -1945,7 +1958,7 @@ begin
           LocalFree(HLOCAL(msg.LPARAM))
         end
     end
-  end; {main loop}
+  end; { main loop }
 
   // Thats the end.  Now clean up.
 EndWriteThread:
@@ -1953,7 +1966,7 @@ EndWriteThread:
   PurgeComm(hCommFile, PURGE_TXABORT + PURGE_TXCLEAR);
   pFSendDataEmpty^ := True;
   CloseHandle(overlappedWrite.hEvent)
-end; {TWriteThread.Execute}
+end; { TWriteThread.Execute }
 
 //
 // FUNCTION: HandleWriteData(LPOVERLAPPED, LPCSTR, DWORD)
@@ -2062,8 +2075,8 @@ begin
           PostHangupCall;
           Exit
         end
-      end {case}
-    end; {WriteFile failure}
+      end { case }
+    end; { WriteFile failure }
 
     // Some data was written.  Make sure it all got written.
 
@@ -2073,7 +2086,7 @@ begin
 
   // Wrote the whole string.
   Result := True
-end; {TWriteThread.HandleWriteData}
+end; { TWriteThread.HandleWriteData }
 
 procedure TWriteThread.PostHangupCall;
 begin
