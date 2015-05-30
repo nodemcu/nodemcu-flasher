@@ -9,3 +9,4 @@ del *.dproj.local
 del *.exe
 del *.vlb
 del *.vrc
+del *.stat
