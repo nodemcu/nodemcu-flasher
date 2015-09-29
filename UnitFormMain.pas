@@ -547,7 +547,7 @@ begin
     if (not BurnOK) then
     begin
       MemoryStream := TMemoryStream.Create;
-      if (I < 8) then
+      if (J < 8) then
       begin
         if (GetMemoryStreamAndBaseAddress(MemoryStream, BaseAddress,
           FrameConfigLine)) then

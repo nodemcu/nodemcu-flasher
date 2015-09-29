@@ -991,6 +991,10 @@ object FormMain: TFormMain
       Font.Style = []
       ImageIndex = 1
       ParentFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object MemoOutput: TMemo
         Left = 0
         Top = 0
