@@ -857,9 +857,18 @@ begin
           if (BitFlag = 0) then
           begin
             // OLD Chip, 24bit MAC
-            MACAddr[0] := $18;
-            MACAddr[1] := $FE;
-            MACAddr[2] := $34;
+            if (MACFlag = 0) then
+            begin
+              MACAddr[0] := $18;
+              MACAddr[1] := $FE;
+              MACAddr[2] := $34;
+            end
+            else
+            begin
+              MACAddr[0] := $AC;
+              MACAddr[1] := $D0;
+              MACAddr[2] := $74;
+            end;
             MACAddr[3] := ((MACReg1 shr 8) And $FF);
             MACAddr[4] := ((MACReg1 And $FF));
             MACAddr[5] := ((MACReg0 shr 24) And $FF);
