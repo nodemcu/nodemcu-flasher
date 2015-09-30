@@ -87,6 +87,14 @@ type
     LastOperationSuccess: Boolean;
     IsThreadStarted: Boolean;
     CurrentAddress: UInt32;
+    MACReg0: UInt32;
+    MACReg1: UInt32;
+    MACReg2: UInt32;
+    MACReg3: UInt32;
+    MACAddr: Array [0 .. 5] of UInt8;
+    MACFlag: UInt8;
+    ChipFlag: UInt8;
+    BitFlag: UInt8;
     APMACStr: string;
     STAMACStr: string;
     FConfigDir: string;
@@ -807,6 +815,7 @@ const
   Reg1: UInt8 = 0;
   Reg2: UInt8 = 0;
   Reg3: UInt8 = 0;
+  Reg4: UInt8 = 0;
 {$J-}
 var
   DataElement: packed record Bytes: array [1 .. 4] of Byte end;
@@ -822,24 +831,56 @@ begin
     case CurrentAddress of
       $3FF00050:
         begin
+          MACReg0 := Data;
           APMACStr := '';
           STAMACStr := '';
           Reg3 := DataElement.Bytes[4];
+          Reg4 := DataElement.Bytes[3];
         end;
       $3FF00054:
         begin
+          MACReg1 := Data;
+          MACFlag := ((MACReg1 shr 16) And $FF);
           Reg1 := DataElement.Bytes[2];
           Reg2 := DataElement.Bytes[1];
-          APMACStr := '1A-FE-34-' + IntToHex(Reg1, 2) + '-' + IntToHex(Reg2, 2)
-            + '-' + IntToHex(Reg3, 2);
-          STAMACStr := '18-FE-34-' + IntToHex(Reg1, 2) + '-' + IntToHex(Reg2, 2)
-            + '-' + IntToHex(Reg3, 2);
+
         end;
       $3FF00058:
         begin
+          MACReg2 := Data;
+          ChipFlag := ((MACReg2 shr 13) And $7);
+          BitFlag := ((MACReg2 shr 12) And $1);
         end;
       $3FF0005C:
         begin
+          MACReg3 := Data;
+          if (BitFlag = 0) then
+          begin
+            // OLD Chip, 24bit MAC
+            MACAddr[0] := $18;
+            MACAddr[1] := $FE;
+            MACAddr[2] := $34;
+            MACAddr[3] := ((MACReg1 shr 8) And $FF);
+            MACAddr[4] := ((MACReg1 And $FF));
+            MACAddr[5] := ((MACReg0 shr 24) And $FF);
+          end
+          else
+          begin
+            // New Chip, 48bit MAC
+            MACAddr[0] := (MACReg3 shr 16) And $FF;
+            MACAddr[1] := (MACReg3 shr 8) And $FF;
+            MACAddr[2] := (MACReg3 And $FF);
+            MACAddr[3] := ((MACReg1 shr 8) And $FF);
+            MACAddr[4] := ((MACReg1 And $FF));
+            MACAddr[5] := ((MACReg0 shr 24) And $FF);
+          end;
+          APMACStr := IntToHex(MACAddr[0] + 2, 2) + '-' +
+            IntToHex(MACAddr[1], 2) + '-' + IntToHex(MACAddr[2], 2) + '-' +
+            IntToHex(MACAddr[3], 2) + '-' + IntToHex(MACAddr[4], 2) + '-' +
+            IntToHex(MACAddr[5], 2);
+          STAMACStr := IntToHex(MACAddr[0], 2) + '-' + IntToHex(MACAddr[1], 2) +
+            '-' + IntToHex(MACAddr[2], 2) + '-' + IntToHex(MACAddr[3], 2) + '-'
+            + IntToHex(MACAddr[4], 2) + '-' + IntToHex(MACAddr[5], 2);
         end;
     end;
     // MemoOutput.Lines.Add(IntToHex(PESPReadRegAck(@RawByte[1])^.RegValue, 8));
