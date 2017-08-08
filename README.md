@@ -17,19 +17,19 @@ Usage
 ---------------
 Just click flash and you can burn firmware to ESP8266. Before you doing it, GPIO0 MUST LOW.
 
-![Begin program](http://i659.photobucket.com/albums/uu316/vowstar/NodeMCU-Flasher-Begin.png)
+![Begin program](Resources/Images/NodeMCU-Flasher-Begin.png)
 
 And wait a moment.
 
-![Programming](http://i659.photobucket.com/albums/uu316/vowstar/NodeMCU-Flasher-Programming.png)
+![Programming](Resources/Images/NodeMCU-Flasher-Programming.png)
 
 Program success.
 
-![Program success](http://i659.photobucket.com/albums/uu316/vowstar/NodeMCU-Flasher-Success.png)
+![Program success](Resources/Images/NodeMCU-Flasher-Success.png)
 
 Setting your own firmware.
 
-![Setting](http://i659.photobucket.com/albums/uu316/vowstar/NodeMCU-Flasher-Setting.png)
+![Setting](Resources/Images/NodeMCU-Flasher-Setting.png)
 
 When the path have some error(e.g. file not exist), the line will become red.
 
